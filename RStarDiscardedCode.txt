@@ -1,0 +1,146 @@
+
+// strictly speaking, these should be implemented as visitors... 
+	
+	// testing only: traverse the tree and print it out in a graphviz format
+	void Print(std::string digraph = "rstartree") const
+	{
+		int id = 1;
+		std::ofstream file;
+		file.open((digraph + ".dot").c_str(), std::ifstream::trunc);
+		
+		file << "digraph " << digraph << " {\n";
+		
+		if (m_root)
+			PrintSubtree(file, "\"root " + m_root->bound.ToString() + "\"", m_root, "", id-1, id);
+	
+		file << "}\n";
+		file.close();
+	}
+	
+	void PrintSubtree(std::ofstream &output, std::string parent, Node * node, std::string level, int parent_id, int &id) const
+	{
+		level += "  ";
+		
+		typename std::vector< BoundedItem<dimensions>* >::iterator it = node->items.begin();
+		for (; it != node->items.end(); it++)
+		{
+			output << level << parent << " -> ";
+		
+			if (node->hasLeaves)
+			{
+				Leaf * leaf = static_cast<Leaf*>(*it);
+				output << "\"" << leaf->leaf << " " << leaf->bound.ToString() << "\"" << std::endl;
+			}
+			else
+			{
+				std::stringstream my_name("");
+				my_name << "\"N" << id++ << " " << (*it)->bound.ToString() << "\"";
+				output << my_name.str() << std::endl;
+				
+				PrintSubtree(output, my_name.str(), static_cast<Node*>(*it), level, id-1, id);
+			}	
+		}
+	}
+	
+	void PrintStats()
+	{
+		// output any information that would be interesting to output here..
+	}
+
+
+/*
+	// searches through a tree for items in a bounding box
+	//
+	// This is here in case it ever becomes useful, but I think the other way of doing searching
+	// works out better. Maybe. We'll see. 
+	
+	class Searcher {
+	public:
+	
+		Searcher(RStarTree<RSTAR_TEMPLATE> * tree, _BoundingBox searchBound) : 
+			m_tree(tree), 
+			m_searchBound(searchBound),
+			m_curnode(tree->m_root)
+		{
+			if (tree->m_root)
+				m_it = m_root->items.begin();
+		}
+		
+		// returns true if an item was found. The parameters (bound, leaf) are
+		// modified if an item is found
+		// I'm not 100% sold on using this mechanism for searching, but it seems
+		// like it beats a recursive visitor pattern... 
+		bool Next(_BoundingBox &bound, LeafType &leaf)
+		{
+			// pick up where we were before
+			while (m_curnode)
+			{	
+				if (node->hasLeaves)
+				{
+					for (; m_it != m_curnode->items.end(); m_it++)
+						if (m_searchBound.overlaps((*m_it).bound))
+						{
+							Leaf * l = static_cast<Leaf*>(*m_it);
+							bound = l->bound;
+							leaf = l->leaf;
+							
+							// return indicating that an item was found
+							m_it++;
+							return true;
+						}
+				}
+				else
+				{
+					// if it has kids, then thats slightly different
+					for (; m_it != m_curnode->items.end(); m_it++)
+					{
+						if (m_searchBound.overlaps((*m_it).bound))
+						{
+							// save current node, setup for new level
+							nodes.push(m_curnode);
+							m_curnode = static_cast<Node*>(*m_it);
+							
+							// save iterator for this level, setup for new level
+							iterators.push(++m_it);
+							m_it = m_curnode->items.begin();
+							break;
+						}
+					}
+				}
+					
+				// if we reach the end of a loop, then traverse back up the tree
+				if (m_it == m_curnode->items.end())
+				{
+					if (nodes.empty())
+						m_curnode = NULL;
+					else
+					{
+						m_nodes.pop();
+						m_iterators.pop();
+					
+						// traverse back up
+						m_curnode = nodes.top();
+						m_it = iterators.top();
+					}
+				}
+			}
+		
+			// done searching
+			return false;
+		}
+		
+	private:
+		Searcher(){}
+	
+		RStarTree<RSTAR_TEMPLATE> * m_tree;
+		_BoundingBox m_searchBound;
+	
+		std::stack<RStarTree<RSTAR_TEMPLATE>::Node*> nodes;
+		std::stack< vector<Node*>::iterator > iterators;
+	
+		// current node, iterator
+		Node * curnode;
+		vector<Node*>::iterator it;
+	
+	};
+	*/
