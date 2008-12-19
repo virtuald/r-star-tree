@@ -103,7 +103,10 @@ public:
 	
 
 	// default constructor
-	RStarTree() : m_root(NULL), m_size(0) { assert(min_child_items > 1 && max_child_items > min_child_items); }
+	RStarTree() : m_root(NULL), m_size(0) 
+	{
+		assert(1 <= min_child_items && min_child_items <= max_child_items/2);
+	}
 	
 	// destructor
 	~RStarTree() { 
@@ -240,6 +243,9 @@ public:
 	{
 		std::list<Leaf*> itemsToReinsert;
 
+		if (!m_root)
+			return;
+		
 		RemoveFunctor<Acceptor, LeafRemover> remove(accept, leafRemover, &itemsToReinsert, &m_size);
 		remove(m_root, true);
 		
@@ -436,6 +442,11 @@ protected:
 		int split_margin = 0;
 		
 		BoundingBox R1, R2;
+
+		// these should always hold true
+		assert(n_items == max_child_items + 1);
+		assert(distribution_count > 0);
+		assert(min_child_items + distribution_count-1 <= n_items);
 		
 		// S1: Invoke ChooseSplitAxis to determine the axis,
 		// perpendicular to which the split 1s performed

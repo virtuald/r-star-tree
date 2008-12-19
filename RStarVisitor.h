@@ -144,7 +144,7 @@ struct RStarRemoveLeaf{
 template <typename Leaf>
 struct RStarRemoveSpecificLeaf
 {
-	bool ContinueVisiting;
+	mutable bool ContinueVisiting;
 	bool m_remove_duplicates;
 	const typename Leaf::leaf_type &m_leaf;
 	
