@@ -226,8 +226,7 @@ struct RStarBoundedItem {
 
 // for_each(items.begin(), items.end(), StretchBoundedItem::BoundingBox(bound));
 template <typename BoundedItem>
-struct StretchBoundingBox : 
-	public std::unary_function< const BoundedItem * const, void >
+struct StretchBoundingBox  
 {
 	typename BoundedItem::BoundingBox * m_bound;
 	explicit StretchBoundingBox(typename BoundedItem::BoundingBox * bound) : m_bound(bound) {}
@@ -246,8 +245,7 @@ struct StretchBoundingBox :
  **********************************************************/
 
 template <typename BoundedItem>
-struct SortBoundedItemsByFirstEdge : 
-	public std::binary_function< const BoundedItem * const, const BoundedItem * const, bool >
+struct SortBoundedItemsByFirstEdge  
 {
 	const std::size_t m_axis;
 	explicit SortBoundedItemsByFirstEdge (const std::size_t axis) : m_axis(axis) {}
@@ -259,8 +257,7 @@ struct SortBoundedItemsByFirstEdge :
 };
 
 template <typename BoundedItem>
-struct SortBoundedItemsBySecondEdge : 
-	public std::binary_function< const BoundedItem * const, const BoundedItem * const, bool >
+struct SortBoundedItemsBySecondEdge  
 {
 	const std::size_t m_axis;
 	explicit SortBoundedItemsBySecondEdge (const std::size_t axis) : m_axis(axis) {}
@@ -273,8 +270,7 @@ struct SortBoundedItemsBySecondEdge :
 
 
 template <typename BoundedItem>
-struct SortBoundedItemsByDistanceFromCenter : 
-	public std::binary_function< const BoundedItem * const, const BoundedItem * const, bool >
+struct SortBoundedItemsByDistanceFromCenter  
 {
 	const typename BoundedItem::BoundingBox * const m_center;
 	explicit SortBoundedItemsByDistanceFromCenter(const typename BoundedItem::BoundingBox * const center) : m_center(center) {}
@@ -299,8 +295,7 @@ struct SortBoundedItemsByAreaEnlargement :
 };
 
 template <typename BoundedItem>
-struct SortBoundedItemsByOverlapEnlargement : 
-	public std::binary_function< const BoundedItem * const, const BoundedItem * const, bool >
+struct SortBoundedItemsByOverlapEnlargement
 {
 	const typename BoundedItem::BoundingBox * const m_center;
 	explicit SortBoundedItemsByOverlapEnlargement(const typename BoundedItem::BoundingBox * const center) : m_center(center) {}
