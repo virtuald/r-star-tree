@@ -597,7 +597,7 @@ protected:
 
 	// visits a node if necessary
 	template <typename Acceptor, typename Visitor>
-	struct VisitFunctor : std::unary_function< const BoundingBox *, void > {
+	struct VisitFunctor {
 	
 		const Acceptor &accept;
 		Visitor &visit;
@@ -616,7 +616,7 @@ protected:
 	
 	// this functor recursively walks the tree
 	template <typename Acceptor, typename Visitor>
-	struct QueryFunctor : std::unary_function< const BoundedItem, void > {
+	struct QueryFunctor  {
 		const Acceptor &accept;
 		Visitor &visitor;
 		
@@ -648,8 +648,7 @@ protected:
 	
 	// determines whether a leaf should be deleted or not
 	template <typename Acceptor, typename LeafRemover>
-	struct RemoveLeafFunctor : 
-		std::unary_function< const BoundingBox *, bool > 
+	struct RemoveLeafFunctor  
 	{
 		const Acceptor &accept;
 		LeafRemover &remove;
@@ -674,8 +673,7 @@ protected:
 	
 	
 	template <typename Acceptor, typename LeafRemover>
-	struct RemoveFunctor :
-		std::unary_function< const BoundedItem *, bool > 
+	struct RemoveFunctor  
 	{
 		const Acceptor &accept;
 		LeafRemover &remove;
