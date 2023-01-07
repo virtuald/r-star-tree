@@ -122,9 +122,7 @@ public:
 	{
 		// ID1: Invoke Insert starting with the leaf level as a
 		// parameter, to Insert a new data rectangle
-		Leaf * newLeaf = new Leaf();
-		newLeaf->bound = bound;
-		newLeaf->leaf  = leaf;
+		Leaf * newLeaf = new Leaf{bound, std::move(leaf)};
 
 		// create a new root node if necessary
 		if (!m_root)
