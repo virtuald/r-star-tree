@@ -81,13 +81,13 @@ struct RStarNode : BoundedItem {
 */
 template <
 	typename LeafType, 
-	std::size_t dimensions, std::size_t min_child_items, std::size_t max_child_items
+	std::size_t dimensions, std::size_t min_child_items, std::size_t max_child_items, typename CoordinateType = int
 >
 class RStarTree {
 public:
 
 	// shortcuts
-	typedef RStarBoundedItem<dimensions>		BoundedItem;
+	typedef RStarBoundedItem<dimensions, CoordinateType>		BoundedItem;
 	typedef typename BoundedItem::BoundingBox	BoundingBox;
 	
 	typedef RStarNode<BoundedItem> 				Node;

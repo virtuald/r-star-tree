@@ -26,33 +26,33 @@
 #include <sstream>
 
 
-template <std::size_t dimensions>
+template <std::size_t dimensions, typename CoordinateType = int>
 struct RStarBoundingBox {
 
 	// edges[x].first is low value, edges[x].second is high value
-	std::pair<int, int> edges[dimensions];
+	std::pair<CoordinateType, CoordinateType> edges[dimensions];
 	
 	// forces all edges to their extremes so we can stretch() it
 	void reset()
 	{
 		for (std::size_t axis = 0; axis < dimensions; axis++)
 		{
-			edges[axis].first = std::numeric_limits<int>::max();
-			edges[axis].second = std::numeric_limits<int>::min();
+			edges[axis].first = std::numeric_limits<CoordinateType>::max();
+			edges[axis].second = std::numeric_limits<CoordinateType>::min();
 		}
 	}
 	
 	// returns a new bounding box that has the maximum boundaries
 	static RStarBoundingBox MaximumBounds()
 	{
-		RStarBoundingBox<dimensions> bound;
+		RStarBoundingBox<dimensions, CoordinateType> bound;
 		bound.reset();
 		return bound;
 	}
 	
 
 	// fits another box inside of this box, returns true if a stretch occured
-	bool stretch(const RStarBoundingBox<dimensions> &bb)
+	bool stretch(const RStarBoundingBox<dimensions, CoordinateType> &bb)
 	{
 		bool ret = false;
 		
@@ -76,9 +76,9 @@ struct RStarBoundingBox {
 	}
 	
 	// the sum of all deltas between edges
-	inline int edgeDeltas() const
+	inline CoordinateType edgeDeltas() const
 	{
-		int distance = 0;
+		CoordinateType distance = 0;
 		for (std::size_t axis = 0; axis < dimensions; axis++)
 			distance += edges[axis].second - edges[axis].first;
 			
@@ -96,7 +96,7 @@ struct RStarBoundingBox {
 	}
 	
 	// this determines if a bounding box is fully contained within this bounding box
-	inline bool encloses(const RStarBoundingBox<dimensions>& bb) const
+	inline bool encloses(const RStarBoundingBox<dimensions, CoordinateType>& bb) const
 	{
 		// if (y1 < x1 || x2 < y2)
 		for (std::size_t axis = 0; axis < dimensions; axis++)
@@ -107,7 +107,7 @@ struct RStarBoundingBox {
 	}
 	
 	// a quicker way to determine if two bounding boxes overlap
-	inline bool overlaps(const RStarBoundingBox<dimensions>& bb) const
+	inline bool overlaps(const RStarBoundingBox<dimensions, CoordinateType>& bb) const
 	{
 		// do it this way so theres no equal signs (in case of doubles)
 		// if (!(x1 < y2) && !(x2 > y1))
@@ -121,16 +121,16 @@ struct RStarBoundingBox {
 	}
 	
 	// calculates the total overlapping area of two boxes
-	double overlap(const RStarBoundingBox<dimensions>& bb) const
+	double overlap(const RStarBoundingBox<dimensions, CoordinateType>& bb) const
 	{
 		double area = 1.0;
 		for (std::size_t axis = 0; area && axis < dimensions; axis++)
 		{
 			// this makes it easier to understand
-			const int x1 = edges[axis].first;
-			const int x2 = edges[axis].second;
-			const int y1 = bb.edges[axis].first;
-			const int y2 = bb.edges[axis].second;
+			const auto x1 = edges[axis].first;
+			const auto x2 = edges[axis].second;
+			const auto y1 = bb.edges[axis].first;
+			const auto y2 = bb.edges[axis].second;
 		
 			// left edge outside left edge
 			if (x1 < y1)
@@ -167,7 +167,7 @@ struct RStarBoundingBox {
 	}
 	
 	// sums the total distances from the center of another bounding box
-	double distanceFromCenter(const RStarBoundingBox<dimensions>& bb) const
+	double distanceFromCenter(const RStarBoundingBox<dimensions, CoordinateType>& bb) const
 	{
 		double distance = 0, t;
 		for (std::size_t axis = 0; axis < dimensions; axis++)
@@ -182,7 +182,7 @@ struct RStarBoundingBox {
 	}
 	
 	// determines if two bounding boxes are identical
-	bool operator==(const RStarBoundingBox<dimensions>& bb)
+	bool operator==(const RStarBoundingBox<dimensions, CoordinateType>& bb)
 	{
 		for (std::size_t axis = 0; axis < dimensions; axis++)
 			if (edges[axis].first != bb.edges[axis].first || edges[axis].second != bb.edges[axis].second)
@@ -211,9 +211,9 @@ struct RStarBoundingBox {
 
 
 
-template <std::size_t dimensions>
+template <std::size_t dimensions, typename CoordinateType = int>
 struct RStarBoundedItem {
-	typedef RStarBoundingBox<dimensions> BoundingBox;
+	typedef RStarBoundingBox<dimensions, CoordinateType> BoundingBox;
 
 	BoundingBox bound;
 };
