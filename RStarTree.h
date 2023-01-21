@@ -81,13 +81,13 @@ struct RStarNode : BoundedItem {
 */
 template <
 	typename LeafType, 
-	std::size_t dimensions, std::size_t min_child_items, std::size_t max_child_items
+	std::size_t dimensions, std::size_t min_child_items, std::size_t max_child_items, typename CoordinateType = int
 >
 class RStarTree {
 public:
 
 	// shortcuts
-	typedef RStarBoundedItem<dimensions>		BoundedItem;
+	typedef RStarBoundedItem<dimensions, CoordinateType>		BoundedItem;
 	typedef typename BoundedItem::BoundingBox	BoundingBox;
 	
 	typedef RStarNode<BoundedItem> 				Node;
@@ -122,9 +122,7 @@ public:
 	{
 		// ID1: Invoke Insert starting with the leaf level as a
 		// parameter, to Insert a new data rectangle
-		Leaf * newLeaf = new Leaf();
-		newLeaf->bound = bound;
-		newLeaf->leaf  = leaf;
+		Leaf * newLeaf = new Leaf{bound, std::move(leaf)};
 
 		// create a new root node if necessary
 		if (!m_root)
@@ -440,8 +438,8 @@ protected:
 		const std::size_t distribution_count = n_items - 2*min_child_items + 1;
 		
 		std::size_t split_axis = dimensions+1, split_edge = 0, split_index = 0;
-		int split_margin = 0;
-		
+		CoordinateType split_margin = 0;
+
 		BoundingBox R1, R2;
 
 		// these should always hold true
@@ -461,7 +459,7 @@ protected:
 		for (std::size_t axis = 0; axis < dimensions; axis++)
 		{
 			// initialize per-loop items
-			int margin = 0;
+			CoordinateType margin = 0;
 			double overlap = 0, dist_area, dist_overlap;
 			std::size_t dist_edge = 0, dist_index = 0;
 		
